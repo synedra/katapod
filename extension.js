@@ -2,6 +2,22 @@ const vscode = require('vscode')
 module.exports = {activate, deactivate}
 
 terminal = null
+commands = {} 
+
+commands.call = function (args) {
+	inform('External API Call: ' + args)
+}
+
+commands.command = function (args) {
+	console.log(args)
+	terminal.show()
+	terminal.sendText(prepareCommand(args))
+}
+
+commands.finish = function (args) {
+	terminal.sendText(prepareCommand(args))
+}
+
 
 /**
  * @param {vscode.ExtensionContext} context
@@ -13,12 +29,8 @@ function activate(context) {
 
     vscode.window.registerUriHandler({
 		handleUri(uri) {
-			inform(uri.path)
-			
 			const words = uri.path.split('/');
-
-			terminal.show()
-			terminal.sendText(prepareCommand(words[2]))
+			commands[words[1]](words[2])
 		}
 	});
 
