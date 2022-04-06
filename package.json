@@ -18,10 +18,6 @@
 	"contributes": {
 		"commands": [
 			{
-            	"command": "katapod.helloWorld",
-            	"title": "Hello World"
-			},
-			{
             	"command": "katapod.helloAleks",
             	"title": "Hello Aleks"
 			}
