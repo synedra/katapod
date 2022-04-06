@@ -1,27 +1,11 @@
 const { syncBuiltinESMExports } = require('module')
 const vscode = require('vscode')
+const path = require('path')
+const fs = require('fs')
+
+const MarkdownIt = require('markdown-it');
+
 module.exports = {activate, deactivate}
-
-terminal = null
-commands = {} 
-
-commands.call = function (args) {
-	inform('External API Call: ' + args)
-}
-
-commands.command = function (args) {
-	console.log(args)
-	terminal.show()
-	terminal.sendText(prepareCommand(args))
-}
-
-commands.finish = function (args) {
-	terminal.sendText(prepareCommand(args))
-}
-
-const callbackUri = vscode.env.asExternalUri(
-	vscode.Uri.parse(`${vscode.env.uriScheme}://aleks.katapod/auth-complete`)
-)
 
 /**
  * @param {vscode.ExtensionContext} context
@@ -29,35 +13,31 @@ const callbackUri = vscode.env.asExternalUri(
 function activate(context) {
 	inform('Katapod is enabled')
 
-	// const commentCommandUri = vscode.Uri.parse(`command:editor.action.addCommentLine`);
-	// inform(commentCommandUri.toString());
+    // console.log(vscode.workspace.workspaceFolders[0].uri.path)
 
-	terminal = vscode.window.createTerminal('cqlsh')
-
-    vscode.window.registerUriHandler({
-		handleUri(uri) {
-			const words = uri.path.split('/');
-			commands[words[1]](words[2])
+	const panel = vscode.window.createWebviewPanel(
+		'catWebview',
+		'Cat Webview',
+		vscode.ViewColumn.One,
+		{
+			enableCommandUris: true,
+			enableScripts: true,
+			retainContextWhenHidden: true
 		}
-	});
+	)
 
-	let disposable1 = vscode.commands.registerCommand('katapod.helloAleks', function () {
-		inform('Hello Aleks!');
-		inform(callbackUri.toString);
-		inform(vscode.env.uriScheme);
-	});
-	context.subscriptions.push(disposable1);
-}
+	const file = vscode.Uri.file(path.join(vscode.workspace.workspaceFolders[0].uri.path, 'step1.md'));
 
-function deactivate() {}
+	const md = new MarkdownIt();
 
-function prepareCommand(rawCommand) {
-	command = rawCommand.replace(/_/g, " ");
-	
-	return command
+	var result = md.render((fs.readFileSync(file.fsPath, 'utf8')))
+
+	panel.webview.html = result
 }
 
 function inform (message) {
 	console.log(message)
 	vscode.window.showInformationMessage(message)
 }
+
+function deactivate() {}
