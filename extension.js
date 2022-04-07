@@ -15,6 +15,7 @@ panel = null
 function activate(context) {
 	inform('Katapod is enabled')
 
+	vscode.commands.executeCommand('workbench.action.closeSidebar');
 // console.log(renderCommandUri('cqlsh'))
 // console.log(renderCommandUri('describe keyspaces;'))
 
@@ -31,8 +32,8 @@ function activate(context) {
 
 function createPanel () {
 	return vscode.window.createWebviewPanel(
-		'catWebview',
-		'Cat Webview',
+		'katapodWebview',
+		'KataPod Webview',
 		vscode.ViewColumn.One,
 		{
 			enableCommandUris: true,
@@ -47,7 +48,7 @@ function loadPage (target) {
 
 	const file = vscode.Uri.file(path.join(vscode.workspace.workspaceFolders[0].uri.path, target.step + '.md'));
 
-	const md = new MarkdownIt({html: true}).use(require('markdown-it-textual-uml'));;
+	const md = new MarkdownIt({html: true}).use(require('markdown-it-textual-uml'));
 
 	const pre = `<!DOCTYPE html>
 	<html lang="en">
