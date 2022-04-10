@@ -3,6 +3,7 @@ const vscode = require('vscode')
 const path = require('path')
 const fs = require('fs')
 const MarkdownIt = require('markdown-it');
+const markdownItAttrs = require('markdown-it-attrs');
 
 module.exports = {activate, deactivate}
 
@@ -16,8 +17,6 @@ function activate(context) {
 	inform('Katapod is enabled')
 
 	vscode.commands.executeCommand('workbench.action.closeSidebar');
-// console.log(renderCommandUri('cqlsh'))
-// console.log(renderCommandUri('describe keyspaces;'))
 
 	panel = createPanel()
 	loadPage({step: 'step1'})
@@ -26,7 +25,6 @@ function activate(context) {
 	terminal.show()
 	
 	context.subscriptions.push(vscode.commands.registerCommand('katapod.sendText', sendText));
-
 	context.subscriptions.push(vscode.commands.registerCommand('katapod.loadPage', loadPage));
 }
 
@@ -48,7 +46,38 @@ function loadPage (target) {
 
 	const file = vscode.Uri.file(path.join(vscode.workspace.workspaceFolders[0].uri.path, target.step + '.md'));
 
-	const md = new MarkdownIt({html: true}).use(require('markdown-it-textual-uml'));
+	const md = new MarkdownIt({html: true})
+		.use(require('markdown-it-textual-uml'))
+		.use(markdownItAttrs);
+
+	// process codeblocks
+	md.renderer.rules.fence_default = md.renderer.rules.fence  
+	md.renderer.rules.fence = function (tokens, idx, options, env, slf) {
+		var token = tokens[idx],
+			info = token.info ? md.utils.unescapeAll(token.info).trim() : '';
+
+		if (info) { // Fallback to the default processor
+			return md.renderer.rules.fence_default(tokens, idx, options, env, slf)
+		}
+	  
+		return  '<a class="command_link" href="command:katapod.sendText?' + renderCommandUri(tokens[idx].content) + '"><pre' + slf.renderAttrs(token) + '><code>' +
+				md.utils.escapeHtml(tokens[idx].content) +
+				'</code></pre></a>\n';
+	};
+
+	// process links
+	link_open_default = md.renderer.rules.link_open || function(tokens, idx, options, env, self) { return self.renderToken(tokens, idx, options); };
+	md.renderer.rules.link_open = function (tokens, idx, options, env, self) {
+		var href = tokens[idx].attrIndex('href');
+	  
+		url = tokens[idx].attrs[href][1]
+		if (url.includes('command:katapod.loadPage?')) {
+			uri = url.replace('command:katapod.loadPage?', '')
+			tokens[idx].attrs[href][1] = 'command:katapod.loadPage?' + renderStepUri(uri);
+		}
+	  
+		return link_open_default(tokens, idx, options, env, self);
+	};
 
 	const pre = `<!DOCTYPE html>
 	<html lang="en">
@@ -59,6 +88,8 @@ function loadPage (target) {
 		<script>mermaid.initialize({startOnLoad:true});</script>
 		<style>
 			pre code {background-color: lightgray; color: black; margin: 0 10px 0 10px; padding: 10px 10px; width: 100%; display: block;}
+			a.command_link {text-decoration:none;}
+			a.orange_bar {display: block; cursor: pointer; text-decoration: none; color: white; background-color: rgb(253, 119, 0); vertical-align: middle; text-align: middle; padding: 20px; width: 100%; text-transform:uppercase;}
 		</style>
 	</head>
 	<body>`
