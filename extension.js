@@ -26,6 +26,8 @@ function activate(context) {
 	
 	context.subscriptions.push(vscode.commands.registerCommand('katapod.sendText', sendText));
 	context.subscriptions.push(vscode.commands.registerCommand('katapod.loadPage', loadPage));
+
+	vscode.commands.executeCommand('notifications.clearAll');
 }
 
 function createPanel () {
