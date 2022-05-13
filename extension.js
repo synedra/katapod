@@ -14,7 +14,7 @@ panel = null
  * @param {vscode.ExtensionContext} context
  */
 function activate(context) {
-	inform('Katapod is enabled')
+	//inform('Katapod is enabled')
 
 	vscode.commands.executeCommand('workbench.action.closeSidebar');
 
