@@ -92,6 +92,7 @@ function loadPage (target) {
 			pre code {background-color: lightgray; color: black; margin: 0 10px 0 10px; padding: 10px 10px; width: 100%; display: block;}
 			a.command_link {text-decoration:none;}
 			a.orange_bar {display: block; cursor: pointer; text-decoration: none; color: white; background-color: rgb(253, 119, 0); vertical-align: middle; text-align: middle; padding: 20px; width: 100%; text-transform:uppercase;}
+			a.steps {color: white; text-decoration: none;}
 		</style>
 	</head>
 	<body>`
