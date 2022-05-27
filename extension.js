@@ -23,7 +23,8 @@ function activate(context) {
 
 	terminal = vscode.window.createTerminal('cqlsh')
 	terminal.show()
-	
+	terminal.sendText("echo -n 'Waiting for Cassandra to start...'; timeout 60 bash -c 'until printf \"\" 2>>/dev/null >>/dev/tcp/localhost/9042; do sleep 2; echo -n \".\"; done'; echo ' Ready!'")
+
 	context.subscriptions.push(vscode.commands.registerCommand('katapod.sendText', sendText));
 	context.subscriptions.push(vscode.commands.registerCommand('katapod.loadPage', loadPage));
 
