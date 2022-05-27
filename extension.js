@@ -19,7 +19,7 @@ function activate(context) {
 	vscode.commands.executeCommand('workbench.action.closeSidebar');
 
 	panel = createPanel()
-	loadPage({step: 'step1'})
+	loadPage({step: 'intro'})
 
 	terminal = vscode.window.createTerminal('cqlsh')
 	terminal.show()
