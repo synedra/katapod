@@ -86,8 +86,8 @@ function loadPage (target) {
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
-		<script>mermaid.initialize({startOnLoad:true});</script>
+		<!-- <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+		<script>mermaid.initialize({startOnLoad:true});</script> -->
 		<style>
 			pre code {background-color: lightgray; color: black; margin: 0 10px 0 10px; padding: 10px 10px; width: 100%; display: block;}
 			a.command_link {text-decoration:none;}
