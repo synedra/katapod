@@ -19,7 +19,7 @@ function activate(context) {
 	vscode.commands.executeCommand('workbench.action.closeSidebar');
 
 	panel = createPanel()
-	loadPage({step: 'intro'})
+	loadPage({ 'step': 'intro' })
 
 	terminal = vscode.window.createTerminal('cqlsh')
 	terminal.show()
@@ -47,7 +47,13 @@ function createPanel () {
 
 function loadPage (target) {
 
-	const file = vscode.Uri.file(path.join(vscode.workspace.workspaceFolders[0].uri.path, target.step + '.md'));
+	if (!vscode.workspace.workspaceFolders[0]) {
+		workingdir = vscode.workspace.rootPath;
+	} else {
+		workingdir = vscode.workspace.workspaceFolders[0].uri.path
+	}
+
+	const file = vscode.Uri.file(path.join(workingdir, target.step + '.md'));
 
 	const md = new MarkdownIt({html: true})
 		.use(require('markdown-it-textual-uml'))
@@ -94,6 +100,7 @@ function loadPage (target) {
 			a.command_link {text-decoration:none;}
 			a.orange_bar {display: block; cursor: pointer; text-decoration: none; color: white; background-color: rgb(253, 119, 0); vertical-align: middle; text-align: middle; padding: 20px; width: 100%; text-transform:uppercase;}
 			a.steps {color: white; text-decoration: none;}
+			div.top {width:100%; padding: 40px 0 20px 20px; background-color: rgb(28, 131, 165); color: white;}
 		</style>
 	</head>
 	<body>`
@@ -109,13 +116,11 @@ function sendText (arguments) {
 
 function renderStepUri (step) {
 	const uri = encodeURIComponent(JSON.stringify([{ 'step': step }])).toString();
-	console.log(uri)
 	return uri
 }
 
 function renderCommandUri (command) {
 	const uri = encodeURIComponent(JSON.stringify([{ 'command': command }])).toString();
-	console.log(uri)
 	return uri
 }
 
