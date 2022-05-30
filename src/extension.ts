@@ -9,6 +9,8 @@ let terminal: vscode.Terminal;
 let panel: vscode.WebviewPanel;
 
 export function activate(context: vscode.ExtensionContext) {
+	vscode.commands.executeCommand('workbench.action.closeSidebar');
+	vscode.commands.executeCommand('workbench.action.closeAuxiliaryBar');
 	vscode.commands.executeCommand('workbench.action.editorLayoutTwoColumns');
 
 	panel = createPanel();
