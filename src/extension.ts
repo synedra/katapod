@@ -9,9 +9,11 @@ let terminal: vscode.Terminal;
 let panel: vscode.WebviewPanel;
 
 export function activate(context: vscode.ExtensionContext) {
+	vscode.commands.executeCommand('notifications.clearAll');
 	vscode.commands.executeCommand('workbench.action.closeAllEditors');
 	vscode.commands.executeCommand('workbench.action.closeSidebar');
 	vscode.commands.executeCommand('workbench.action.closeAuxiliaryBar');
+	vscode.commands.executeCommand('workbench.action.closePanel');
 	vscode.commands.executeCommand('workbench.action.editorLayoutTwoColumns');
 
 	panel = createPanel();
@@ -116,10 +118,12 @@ function loadPage (target: Target) {
 	var result = md.render((fs.readFileSync(file.fsPath, 'utf8')));
 
 	panel.webview.html = pre + result + post;
+	vscode.commands.executeCommand('notifications.clearAll');
 }
 
 function sendText (command: any) {
 	terminal.sendText(command.command);
+	vscode.commands.executeCommand('notifications.clearAll');
 }
 
 function renderStepUri (step: string) {
