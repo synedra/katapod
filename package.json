@@ -6,7 +6,7 @@
         "url": "https://github.com/HadesArchitect/katapod"
     },
     "description": "",
-    "version": "0.4.1",
+    "version": "0.5.0",
     "license": "Apache-2.0",
     "engines": {
         "vscode": "^1.64.0"
@@ -23,7 +23,7 @@
         "commands": [
             {
                 "command": "katapod.reloadPage",
-                "title": "Katapod: Reloads the Opened Step",
+                "title": "Katapod: Reload the Opened Step",
                 "icon": "$(debug-restart)"
             }
         ],
