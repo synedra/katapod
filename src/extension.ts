@@ -29,7 +29,17 @@ export function activate(context: vscode.ExtensionContext) {
 	};
 
 	terminal = vscode.window.createTerminal(options);
-	terminal.sendText("clear; ./wait.sh");
+
+	const waitsh = vscode.Uri.file(path.join(getWorkingDir(), 'wait.sh'));
+	vscode.workspace.fs.stat(waitsh).then(
+		function(){
+			console.log('Executing wait.sh...');
+			terminal.sendText("clear; ./wait.sh");
+		}, 
+		function () {
+			console.log('Skipping wait, wait.sh not found.');
+		}
+	);
 
 	context.subscriptions.push(vscode.commands.registerCommand('katapod.sendText', sendText));
 	context.subscriptions.push(vscode.commands.registerCommand('katapod.loadPage', loadPage));
@@ -61,15 +71,7 @@ function reloadPage(command: any) {
 }
 
 function loadPage (target: Target) {
-	lastStep = target.step;
-	let workingdir: string | undefined;
-	if (!vscode.workspace.workspaceFolders) {
-		workingdir = vscode.workspace.rootPath;
-	} else {
-		workingdir = vscode.workspace.workspaceFolders[0].uri.path;
-	}
-
-	const file = vscode.Uri.file(path.join(workingdir, target.step + '.md'));
+	const file = vscode.Uri.file(path.join(getWorkingDir(), target.step + '.md'));
 
 	const md = new markdownIt({html: true})
 		.use(require('markdown-it-textual-uml'))
@@ -109,15 +111,8 @@ function loadPage (target: Target) {
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<!-- <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
-		<script>mermaid.initialize({startOnLoad:true});</script> -->
-		<style>
-			pre code {background-color: lightgray; color: black; margin: 0 10px 0 10px; padding: 10px 10px; width: 100%; display: block;}
-			a.command_link {text-decoration:none;}
-			a.orange_bar {display: block; cursor: pointer; text-decoration: none; color: white; background-color: rgb(253, 119, 0); vertical-align: middle; text-align: middle; padding: 20px; width: 100%; text-transform:uppercase;}
-			a.steps {color: white; text-decoration: none;}
-			div.top {width:100%; padding: 40px 0 20px 20px; background-color: rgb(28, 131, 165); color: white;}
-		</style>
+		<link rel="stylesheet" type="text/css" href="https://datastax-academy.github.io/katapod-shared-assets/css/katapod.css" />
+		<script src="https://datastax-academy.github.io/katapod-shared-assets/js/katapod.js"></script>
 	</head>
 	<body>`;
 	const post = `</body></html>`;
@@ -140,6 +135,14 @@ function renderStepUri (step: string) {
 function renderCommandUri (command: string) {
 	const uri = encodeURIComponent(JSON.stringify([{ 'command': command }])).toString();
 	return uri;
+}
+
+function getWorkingDir(): string | undefined {
+	if (vscode.workspace.workspaceFolders) {
+		return vscode.workspace.workspaceFolders[0].uri.path;
+	}
+
+	return vscode.workspace.rootPath;
 }
 
 function inform (message: string) {
