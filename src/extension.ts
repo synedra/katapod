@@ -7,7 +7,7 @@ const markdownItAttrs = require('markdown-it-attrs');
 
 let terminal: vscode.Terminal;
 let panel: vscode.WebviewPanel;
-let lastStep: string = 'intro';
+let lastStep: string;
 
 export function activate(context: vscode.ExtensionContext) {
 	vscode.commands.executeCommand('notifications.clearAll');
@@ -71,6 +71,8 @@ function reloadPage(command: any) {
 }
 
 function loadPage (target: Target) {
+	lastStep = target.step;
+
 	const file = vscode.Uri.file(path.join(getWorkingDir(), target.step + '.md'));
 
 	const md = new markdownIt({html: true})
@@ -113,6 +115,10 @@ function loadPage (target: Target) {
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<link rel="stylesheet" type="text/css" href="https://datastax-academy.github.io/katapod-shared-assets/css/katapod.css" />
 		<script src="https://datastax-academy.github.io/katapod-shared-assets/js/katapod.js"></script>
+		<link rel="stylesheet" type="text/css" href="https://datastax-academy.github.io/katapod-shared-assets/quiz/quiz.css" />
+		<link rel="stylesheet" type="text/css" href="https://datastax-academy.github.io/katapod-shared-assets/quiz/page.css" />
+		<script src="https://datastax-academy.github.io/katapod-shared-assets/quiz/quiz.js"></script>
+		<script src="https://datastax-academy.github.io/katapod-shared-assets/quiz/main.js"></script>
 	</head>
 	<body>`;
 	const post = `</body></html>`;

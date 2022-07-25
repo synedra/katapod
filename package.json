@@ -6,7 +6,7 @@
         "url": "https://github.com/HadesArchitect/katapod"
     },
     "description": "",
-    "version": "0.5.0",
+    "version": "0.6.0",
     "license": "Apache-2.0",
     "engines": {
         "vscode": "^1.64.0"
