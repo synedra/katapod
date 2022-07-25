@@ -29,8 +29,7 @@ export function activate(context: vscode.ExtensionContext) {
 	};
 
 	terminal = vscode.window.createTerminal(options);
-	// terminal.sendText("clear; ./wait.sh");
-	terminal.sendText("clear; tail -f /dev/null");
+	terminal.sendText("clear; ./wait.sh");
 
 	context.subscriptions.push(vscode.commands.registerCommand('katapod.sendText', sendText));
 	context.subscriptions.push(vscode.commands.registerCommand('katapod.loadPage', loadPage));
