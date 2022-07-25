@@ -7,6 +7,7 @@ const markdownItAttrs = require('markdown-it-attrs');
 
 let terminal: vscode.Terminal;
 let panel: vscode.WebviewPanel;
+let lastStep: string = 'intro';
 
 export function activate(context: vscode.ExtensionContext) {
 	vscode.commands.executeCommand('notifications.clearAll');
@@ -28,10 +29,12 @@ export function activate(context: vscode.ExtensionContext) {
 	};
 
 	terminal = vscode.window.createTerminal(options);
-	terminal.sendText("clear; ./wait.sh");
+	// terminal.sendText("clear; ./wait.sh");
+	terminal.sendText("clear; tail -f /dev/null");
 
 	context.subscriptions.push(vscode.commands.registerCommand('katapod.sendText', sendText));
 	context.subscriptions.push(vscode.commands.registerCommand('katapod.loadPage', loadPage));
+	context.subscriptions.push(vscode.commands.registerCommand('katapod.reloadPage', reloadPage));
 
 	vscode.commands.executeCommand('notifications.clearAll');
 }
@@ -54,8 +57,12 @@ interface Target {
 	step: string;
 }
 
-function loadPage (target: Target) {
+function reloadPage(command: any) {
+	loadPage({ 'step': lastStep });
+}
 
+function loadPage (target: Target) {
+	lastStep = target.step;
 	let workingdir: string | undefined;
 	if (!vscode.workspace.workspaceFolders) {
 		workingdir = vscode.workspace.rootPath;

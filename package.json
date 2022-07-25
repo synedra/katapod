@@ -6,7 +6,7 @@
         "url": "https://github.com/HadesArchitect/katapod"
     },
     "description": "",
-    "version": "0.3.6",
+    "version": "0.4.0",
     "license": "Apache-2.0",
     "engines": {
         "vscode": "^1.64.0"
@@ -15,11 +15,27 @@
         "Other"
     ],
     "activationEvents": [
-        "onStartupFinished"
+        "onStartupFinished",
+        "onCommand:katapod.reloadPage"
     ],
 	"main": "./out/extension.js",
     "contributes": {
-        "commands": []
+        "commands": [
+            {
+                "command": "katapod.reloadPage",
+                "title": "Katapod: Reloads the Opened Step",
+                "icon": "$(debug-restart)"
+            }
+        ],
+        "menus": {
+            "editor/title": [
+              {
+                "when": "resourceLangId == markdown",
+                "command": "katapod.reloadPage",
+                "group": "navigation"
+              }
+            ]
+          }
     },
 	"scripts": {
 		"vscode:prepublish": "yarn run compile",
