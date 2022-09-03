@@ -1,12 +1,12 @@
 {
     "name": "katapod",
-    "publisher": "aleks",
+    "publisher": "hadesarchitect",
     "displayName": "katapod",
     "repository": {
         "url": "https://github.com/HadesArchitect/katapod"
     },
     "description": "",
-    "version": "0.6.0",
+    "version": "0.6.0-8",
     "license": "Apache-2.0",
     "engines": {
         "vscode": "^1.64.0"
@@ -18,7 +18,7 @@
         "onStartupFinished",
         "onCommand:katapod.reloadPage"
     ],
-	"main": "./out/extension.js",
+	"browser": "./out/extension.js",
     "contributes": {
         "commands": [
             {
