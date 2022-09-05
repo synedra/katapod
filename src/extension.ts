@@ -1,4 +1,5 @@
 const { syncBuiltinESMExports } = require('module');
+import { waitForDebugger } from 'inspector';
 import * as vscode from 'vscode';
 const path = require('path');
 const fs = require('fs');
@@ -11,47 +12,47 @@ let lastStep: string;
 
 export function activate(context: vscode.ExtensionContext) {
 	vscode.commands.executeCommand('notifications.clearAll');
-	vscode.commands.executeCommand('workbench.action.closeAllEditors');
 	vscode.commands.executeCommand('workbench.action.closeSidebar');
 	vscode.commands.executeCommand('workbench.action.closeAuxiliaryBar');
 	vscode.commands.executeCommand('workbench.action.closePanel');
-	vscode.commands.executeCommand('workbench.action.editorLayoutTwoColumns');
-
-	panel = createPanel();
-	loadPage({ 'step': 'intro' });
-
-	const locationOptions: vscode.TerminalEditorLocationOptions = {
-		viewColumn: vscode.ViewColumn.Beside
-	};
-	const options: vscode.TerminalOptions = {
-		name: 'cqlsh-editor',
-		location: locationOptions
-	};
-
-	terminal = vscode.window.createTerminal(options);
-
-	const waitsh = vscode.Uri.file(path.join(getWorkingDir(), 'wait.sh'));
-	vscode.workspace.fs.stat(waitsh).then(
-		function(){
-			console.log('Executing wait.sh...');
-			terminal.sendText("clear; ./wait.sh");
-		}, 
-		function () {
-			console.log('Skipping wait, wait.sh not found.');
-		}
-	);
+	vscode.commands.executeCommand('workbench.action.closeAllEditors').then(start);
 
 	context.subscriptions.push(vscode.commands.registerCommand('katapod.sendText', sendText));
 	context.subscriptions.push(vscode.commands.registerCommand('katapod.loadPage', loadPage));
 	context.subscriptions.push(vscode.commands.registerCommand('katapod.reloadPage', reloadPage));
+	context.subscriptions.push(vscode.commands.registerCommand('katapod.start', start));
 
 	vscode.commands.executeCommand('notifications.clearAll');
 }
 
+function start (command?: any) {
+	vscode.commands.executeCommand('workbench.action.editorLayoutTwoColumns');
+
+	panel = createPanel();
+	log('debug', panel.viewType);
+	loadPage({ 'step': 'intro' });
+
+	terminal = createTerminal();
+
+	wait();
+}
+
+function wait () {
+	const waitsh = vscode.Uri.file(path.join(getWorkingDir(), 'wait.sh'));
+	vscode.workspace.fs.stat(waitsh).then(
+		function(){
+			log('debug', 'Executing wait.sh...');
+			terminal.sendText('clear; ./wait.sh');
+		}, 
+		function () {log('debug', 'Skipping wait, wait.sh not found.');}
+	);
+}
+
 function createPanel () {
+	log('debug', 'Creating WebView...');
 	return vscode.window.createWebviewPanel(
-		'katapodWebview',
-		'KataPod Webview',
+		'datastax.katapod',
+		'DataStax Training Grounds',
 		vscode.ViewColumn.Beside,
 		{
 			enableCommandUris: true,
@@ -60,6 +61,21 @@ function createPanel () {
 			enableFindWidget: true
 		}
 	);
+}
+
+function createTerminal() {
+	log('debug', 'Creating terminal...');
+
+	const locationOptions: vscode.TerminalEditorLocationOptions = {
+		viewColumn: vscode.ViewColumn.Beside
+	};
+
+	const options: vscode.TerminalOptions = {
+		name: 'cqlsh-editor',
+		location: locationOptions
+	};
+
+	return vscode.window.createTerminal(options);
 }
 
 interface Target {
@@ -89,9 +105,10 @@ function loadPage (target: Target) {
 			return md.renderer.rules.fence_default(tokens, idx, options, env, slf);
 		}
 	  
-		return  '<a class="command_link" href="command:katapod.sendText?' + renderCommandUri(tokens[idx].content) + '"><pre' + slf.renderAttrs(token) + '><code>' +
+		return  '<pre' + slf.renderAttrs(token) + ' title="Click <play button> to execute!"><code>' + '<a class="command_link" title="Click to execute!" class="button1" href="command:katapod.sendText?' + 
+				renderCommandUri(tokens[idx].content) + '">▶</a>' + 
 				md.utils.escapeHtml(tokens[idx].content) +
-				'</code></pre></a>\n';
+				'</code></pre>\n';
 	};
 
 	// process links
@@ -151,9 +168,9 @@ function getWorkingDir(): string | undefined {
 	return vscode.workspace.rootPath;
 }
 
-function inform (message: string) {
-	console.log(message);
-	vscode.window.showInformationMessage(message);
+function log (level: string, message: string) {
+	console.log('KataPod ' + level.toUpperCase() + ' ' + message);
+	// vscode.window.showInformationMessage(message);
 }
 
 export function deactivate() {}
