@@ -6,7 +6,7 @@
         "url": "https://github.com/HadesArchitect/katapod"
     },
     "description": "",
-    "version": "0.6.1-multiterminals-beta3",
+    "version": "1.0.0",
     "license": "Apache-2.0",
     "engines": {
         "vscode": "^1.64.0"
