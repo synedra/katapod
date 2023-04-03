@@ -62,7 +62,9 @@ export function runCommand(fullCommand: FullCommand, env: KatapodEnvironment) {
 			env.state.codeInvocationCount[fullCommand.codeBlockId] = (env.state.codeInvocationCount[fullCommand.codeBlockId] || 0) +1;
 			// actually launch the command:
 			targetTerminal.sendText(fullCommand.command);
-			vscode.commands.executeCommand("notifications.clearAll");
+			vscode.commands.executeCommand("notifications.clearAll").then( () => {
+				env.components.panel.webview.postMessage({command: "mark_executed_block", "blockId": fullCommand.codeBlockId});
+			});
 		} else {
 			log("debug", `[runCommand]: Refusing to execute ${JSON.stringify(fullCommand)} (invocations detected: ${invocationCountSoFar})`);
 		}
