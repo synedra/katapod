@@ -20,6 +20,7 @@ export interface ConfigCommand {
 	execute?: boolean;
 	maxInvocations?: number | "unlimited";
 	macrosBefore?: Array<Macro>;
+	backgroundColor?: string;
 }
 // the above would become the following, with defaults and added stuff
 export interface FullCommand {
@@ -29,6 +30,7 @@ export interface FullCommand {
 	codeBlockId: string;
 	maxInvocations: number | "unlimited";
 	macrosBefore?: Array<Macro>;
+	backgroundColor?: string;
 }
 
 

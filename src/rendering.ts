@@ -18,6 +18,7 @@ import {log} from "./logging";
 const executionInfoPrefix = "### ";
 const defaultCodeBlockMaxInvocations = "unlimited";
 
+
 const stepPageHtmlPrefix = `
 <!DOCTYPE html>
 <html lang="en">
@@ -78,6 +79,7 @@ function parseCodeBlockContent(step: string, index: number, cbContent: string): 
         ls
     or
         ### myTermId
+		ls
     into a FullCommand object.
     Notes:
         - Codeblocks with no "### "-prefixed lines will just work
@@ -217,7 +219,8 @@ export function loadPage(target: TargetStep, env: KatapodEnvironment) {
 		const aSpanEleCloser = suppressExecution ? '</span>': '</a>';
 		const preEle = `<pre` + slf.renderAttrs(token) + `>`;
 		const codeEleClasses = suppressExecution ? "codeblock nonexecutable" : "codeblock executable";
-		const codeEle = `<code id="${parsedCommand.codeBlockId}" class="${codeEleClasses}">`;
+		const codeEleStyle = parsedCommand.backgroundColor ? ` style="background-color: ${parsedCommand.backgroundColor};"` : "";
+		const codeEle = `<code id="${parsedCommand.codeBlockId}" class="${codeEleClasses}"${codeEleStyle}>`;
 
 		return `${aSpanEle}${preEle}${codeEle}${renderedCode}</code></pre>${aSpanEleCloser}`;
 
@@ -252,9 +255,42 @@ export function loadPage(target: TargetStep, env: KatapodEnvironment) {
 		return imageDefault(tokens, idx, options, env, self);
 	};
 
+	// process tables
+	// (see https://github.com/markdown-it/markdown-it/blob/master/docs/examples/renderer_rules.md for the general procedure)
+	const tableTbProxy = (tokens: any, idx: any, options: any, env: any, self: any) => self.renderToken(tokens, idx, options);
+	const tableTbDefault = md.renderer.rules.table_open || tableTbProxy;
+	md.renderer.rules.table_open = function(tokens: any, idx: any, options: any, env: any, self: any) {
+	   // Make your changes here ...
+	   tokens[idx].attrJoin("class", "katapod-table");
+	   // ... then render it using the existing logic
+	   return tableTbDefault(tokens, idx, options, env, self);
+	};
+
+	const tableThProxy = (tokens: any, idx: any, options: any, env: any, self: any) => self.renderToken(tokens, idx, options);
+	const tableThDefault = md.renderer.rules.th_open || tableThProxy;
+	md.renderer.rules.th_open = function(tokens: any, idx: any, options: any, env: any, self: any) {
+	   // Make your changes here ...
+	   tokens[idx].attrJoin("class", "katapod-table");
+	   // ... then render it using the existing logic
+	   return tableThDefault(tokens, idx, options, env, self);
+	};
+
+	const tableTdProxy = (tokens: any, idx: any, options: any, env: any, self: any) => self.renderToken(tokens, idx, options);
+	const tableTdDefault = md.renderer.rules.td_open || tableTdProxy;
+	md.renderer.rules.td_open = function(tokens: any, idx: any, options: any, env: any, self: any) {
+	   // Make your changes here ...
+	   tokens[idx].attrJoin("class", "katapod-table");
+	   // ... then render it using the existing logic
+	   return tableTdDefault(tokens, idx, options, env, self);
+	};
+
+
 	var result = md.render((fs.readFileSync(file.fsPath, "utf8")));
 
 	env.components.panel.webview.html = stepPageHtmlPrefix + result + stepPageHtmlPostfix;
+
+	// quick local-run html debug
+	// fs.writeFileSync('rendered_katapod_page.html',stepPageHtmlPrefix + result + stepPageHtmlPostfix, 'utf8');
 
 	// process step-scripts, if present:
 	const stepScripts = (env.configuration.navigation?.onLoadCommands || {})[target.step] || {};
