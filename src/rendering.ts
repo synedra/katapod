@@ -26,7 +26,7 @@ const stepPageHtmlPrefix = `
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.7.0/build/styles/default.min.css">
-		<link rel="stylesheet" type="text/css" href="https://datastax-academy.github.io/katapod-shared-assets/css/katapodv2.css" />
+		<link rel="stylesheet" type="text/css" href="https://datastax-academy.github.io/katapod-shared-assets/css/katapod.css" />
 		<script src="https://datastax-academy.github.io/katapod-shared-assets/js/katapod.js"></script>
 		<link rel="stylesheet" type="text/css" href="https://datastax-academy.github.io/katapod-shared-assets/quiz/quiz.css" />
 		<link rel="stylesheet" type="text/css" href="https://datastax-academy.github.io/katapod-shared-assets/quiz/page.css" />
@@ -265,25 +265,6 @@ export function loadPage(target: TargetStep, env: KatapodEnvironment) {
 	   // ... then render it using the existing logic
 	   return tableTbDefault(tokens, idx, options, env, self);
 	};
-
-	const tableThProxy = (tokens: any, idx: any, options: any, env: any, self: any) => self.renderToken(tokens, idx, options);
-	const tableThDefault = md.renderer.rules.th_open || tableThProxy;
-	md.renderer.rules.th_open = function(tokens: any, idx: any, options: any, env: any, self: any) {
-	   // Make your changes here ...
-	   tokens[idx].attrJoin("class", "katapod-table");
-	   // ... then render it using the existing logic
-	   return tableThDefault(tokens, idx, options, env, self);
-	};
-
-	const tableTdProxy = (tokens: any, idx: any, options: any, env: any, self: any) => self.renderToken(tokens, idx, options);
-	const tableTdDefault = md.renderer.rules.td_open || tableTdProxy;
-	md.renderer.rules.td_open = function(tokens: any, idx: any, options: any, env: any, self: any) {
-	   // Make your changes here ...
-	   tokens[idx].attrJoin("class", "katapod-table");
-	   // ... then render it using the existing logic
-	   return tableTdDefault(tokens, idx, options, env, self);
-	};
-
 
 	var result = md.render((fs.readFileSync(file.fsPath, "utf8")));
 
