@@ -17,7 +17,7 @@ function createPanel(config: ConfigObject): vscode.WebviewPanel {
 	log("debug", "[createPanel] Creating WebViewPanel...");
 	return vscode.window.createWebviewPanel(
 		"datastax.katapod",
-		"DataStax Training Grounds",
+		"DataStax Hands-On Labs",
 		vscode.ViewColumn.One,
 		{
 			enableCommandUris: true,
