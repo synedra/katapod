@@ -45,9 +45,9 @@ const stepPageHtmlPostfix = `
 						window.scrollTo(0, 0);
 						break;
 					case "mark_executed_block":
-						const codeBlock = document.getElementById(message.blockId);
-						if (codeBlock) {
-							codeBlock.classList.add("executed");
+						const codeBlockPre = document.getElementById("pre_" + message.blockId);
+						if (codeBlockPre) {
+							codeBlockPre.classList.add("executed");
 							break;
 						}
 				}
@@ -219,7 +219,7 @@ export function loadPage(target: TargetStep, env: KatapodEnvironment) {
 		const aSpanEleCloser = suppressExecution ? '</span>': '</a>';
 		const preEleClasses = suppressExecution ? "nonexecutable" : "executable";
 		const preEleStyle = parsedCommand.backgroundColor ? ` style="background-color: ${parsedCommand.backgroundColor};"` : "";
-		const preEle = `<pre` + slf.renderAttrs(token) + ` class="${preEleClasses}"${preEleStyle}>`;
+		const preEle = `<pre id="pre_${parsedCommand.codeBlockId}"` + slf.renderAttrs(token) + ` class="${preEleClasses}"${preEleStyle}>`;
 		const codeEleClasses = "codeblock";
 		const codeEle = `<code id="${parsedCommand.codeBlockId}" class="${codeEleClasses}">`;
 
