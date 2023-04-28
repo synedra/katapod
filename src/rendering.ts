@@ -217,10 +217,11 @@ export function loadPage(target: TargetStep, env: KatapodEnvironment) {
 		const executionHref = `command:katapod.sendText?${renderCommandUri(parsedCommand)}`;
 		const aSpanEle = suppressExecution ? '<span>': `<a class="codeblock" title="Click to execute" href="${executionHref}">`;
 		const aSpanEleCloser = suppressExecution ? '</span>': '</a>';
-		const preEle = `<pre` + slf.renderAttrs(token) + `>`;
-		const codeEleClasses = suppressExecution ? "codeblock nonexecutable" : "codeblock executable";
-		const codeEleStyle = parsedCommand.backgroundColor ? ` style="background-color: ${parsedCommand.backgroundColor};"` : "";
-		const codeEle = `<code id="${parsedCommand.codeBlockId}" class="${codeEleClasses}"${codeEleStyle}>`;
+		const preEleClasses = suppressExecution ? "nonexecutable" : "executable";
+		const preEleStyle = parsedCommand.backgroundColor ? ` style="background-color: ${parsedCommand.backgroundColor};"` : "";
+		const preEle = `<pre` + slf.renderAttrs(token) + ` class="${preEleClasses}"${preEleStyle}>`;
+		const codeEleClasses = "codeblock";
+		const codeEle = `<code id="${parsedCommand.codeBlockId}" class="${codeEleClasses}">`;
 
 		return `${aSpanEle}${preEle}${codeEle}${renderedCode}</code></pre>${aSpanEleCloser}`;
 
