@@ -26,7 +26,7 @@ const stepPageHtmlPrefix = `
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.7.0/build/styles/default.min.css">
-		<link rel="stylesheet" type="text/css" href="https://datastax-academy.github.io/katapod-shared-assets/css/katapodv2.css" />
+		<link rel="stylesheet" type="text/css" href="https://datastax-academy.github.io/katapod-shared-assets/css/katapod.css" />
 		<script src="https://datastax-academy.github.io/katapod-shared-assets/js/katapod.js"></script>
 		<link rel="stylesheet" type="text/css" href="https://datastax-academy.github.io/katapod-shared-assets/quiz/quiz.css" />
 		<link rel="stylesheet" type="text/css" href="https://datastax-academy.github.io/katapod-shared-assets/quiz/page.css" />
@@ -193,7 +193,7 @@ export function loadPage(target: TargetStep, env: KatapodEnvironment) {
 
 	// process inline code
 	md.renderer.rules.code_inline = function (tokens: any, idx: any, options: any, env: any, slf: any) {
-		// modified from: https://github.com/markdown-it/markdown-it/blob/master/lib/renderer.js#L21-L27
+		// modified from: https://github.com/markdown-it/markdown-it/blob/2b6cac25823af011ff3bc7628bc9b06e483c5a08/lib/renderer.js#L21-L27
 		var token = tokens[idx];
 		return  '<code class="inline_code"' + slf.renderAttrs(token) + '>' +
 				md.utils.escapeHtml(token.content) +
