@@ -45,9 +45,9 @@ const stepPageHtmlPostfix = `
 						window.scrollTo(0, 0);
 						break;
 					case "mark_executed_block":
-						const codeBlock = document.getElementById(message.blockId);
-						if (codeBlock) {
-							codeBlock.classList.add("executed");
+						const codeBlockPre = document.getElementById("pre_" + message.blockId);
+						if (codeBlockPre) {
+							codeBlockPre.classList.add("executed");
 							break;
 						}
 				}
@@ -193,7 +193,7 @@ export function loadPage(target: TargetStep, env: KatapodEnvironment) {
 
 	// process inline code
 	md.renderer.rules.code_inline = function (tokens: any, idx: any, options: any, env: any, slf: any) {
-		// modified from: https://github.com/markdown-it/markdown-it/blob/master/lib/renderer.js#L21-L27
+		// modified from: https://github.com/markdown-it/markdown-it/blob/2b6cac25823af011ff3bc7628bc9b06e483c5a08/lib/renderer.js#L21-L27
 		var token = tokens[idx];
 		return  '<code class="inline_code"' + slf.renderAttrs(token) + '>' +
 				md.utils.escapeHtml(token.content) +
@@ -217,10 +217,11 @@ export function loadPage(target: TargetStep, env: KatapodEnvironment) {
 		const executionHref = `command:katapod.sendText?${renderCommandUri(parsedCommand)}`;
 		const aSpanEle = suppressExecution ? '<span>': `<a class="codeblock" title="Click to execute" href="${executionHref}">`;
 		const aSpanEleCloser = suppressExecution ? '</span>': '</a>';
-		const preEle = `<pre` + slf.renderAttrs(token) + `>`;
-		const codeEleClasses = suppressExecution ? "codeblock nonexecutable" : "codeblock executable";
-		const codeEleStyle = parsedCommand.backgroundColor ? ` style="background-color: ${parsedCommand.backgroundColor};"` : "";
-		const codeEle = `<code id="${parsedCommand.codeBlockId}" class="${codeEleClasses}"${codeEleStyle}>`;
+		const preEleClasses = suppressExecution ? "nonexecutable" : "executable";
+		const preEleStyle = parsedCommand.backgroundColor ? ` style="background-color: ${parsedCommand.backgroundColor};"` : "";
+		const preEle = `<pre id="pre_${parsedCommand.codeBlockId}"` + slf.renderAttrs(token) + ` class="${preEleClasses}"${preEleStyle}>`;
+		const codeEleClasses = "codeblock";
+		const codeEle = `<code id="${parsedCommand.codeBlockId}" class="${codeEleClasses}">`;
 
 		return `${aSpanEle}${preEle}${codeEle}${renderedCode}</code></pre>${aSpanEleCloser}`;
 
