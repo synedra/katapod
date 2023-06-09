@@ -3,7 +3,7 @@ Parsing/rendering markdown, code blocks and other elements.
 */
 
 import * as vscode from "vscode";
-import * as path from "path";
+// import * as path from "path";
 const fs = require("fs");
 const markdownIt = require("markdown-it");
 const markdownItAttrs = require("markdown-it-attrs");

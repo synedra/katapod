@@ -8,6 +8,7 @@ import {runCommand, FullCommand} from "./runCommands";
 import {loadPage, reloadPage, TargetStep} from "./rendering";
 import {setupLayout} from "./layout";
 import {KatapodEnvironment} from "./state";
+import {isKatapodScenario} from "./filesystem";
 
 let katapodEnvironment: KatapodEnvironment;
 
@@ -28,18 +29,26 @@ export async function activate(context: vscode.ExtensionContext) {
 	(which helps fighting nondeterminism in these calls while avoiding chains of ".then(...)" with all await's).
 	See https://stackoverflow.com/questions/64640967/can-a-vscode-extension-activate-method-be-async.
 	*/
-	context.subscriptions.push(vscode.commands.registerCommand("katapod.sendText", sendTextClosure));
-	context.subscriptions.push(vscode.commands.registerCommand("katapod.reloadPage", reloadPageClosure));
-	context.subscriptions.push(vscode.commands.registerCommand("katapod.loadPage", loadPageClosure));
-	context.subscriptions.push(vscode.commands.registerCommand("katapod.start", start));
 
-	await vscode.commands.executeCommand("notifications.clearAll");
-	await vscode.commands.executeCommand("workbench.action.closeSidebar");
-	await vscode.commands.executeCommand("workbench.action.closeAuxiliaryBar");
-	await vscode.commands.executeCommand("workbench.action.closePanel");
-	await vscode.commands.executeCommand("workbench.action.closeAllEditors");
-	start();
-	await vscode.commands.executeCommand("notifications.clearAll");
+	isKatapodScenario().then( async (isScen) => {
+		if(isScen){
+			log('debug', 'Katapod scenario detected. Activating extension.');
+			context.subscriptions.push(vscode.commands.registerCommand("katapod.sendText", sendTextClosure));
+			context.subscriptions.push(vscode.commands.registerCommand("katapod.reloadPage", reloadPageClosure));
+			context.subscriptions.push(vscode.commands.registerCommand("katapod.loadPage", loadPageClosure));
+			context.subscriptions.push(vscode.commands.registerCommand("katapod.start", start));
+
+			await vscode.commands.executeCommand("notifications.clearAll");
+			await vscode.commands.executeCommand("workbench.action.closeSidebar");
+			await vscode.commands.executeCommand("workbench.action.closeAuxiliaryBar");
+			await vscode.commands.executeCommand("workbench.action.closePanel");
+			await vscode.commands.executeCommand("workbench.action.closeAllEditors");
+			start();
+			await vscode.commands.executeCommand("notifications.clearAll");
+			} else {
+				log('debug', 'Katapod scenario not detected. Extension not activated.');
+			}
+	} );
 }
 
 export function deactivate() {}

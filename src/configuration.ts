@@ -8,13 +8,7 @@ import {buildFullFileUri, checkFileExists} from "./filesystem";
 import {log} from "./logging";
 import {ConfigCommand} from "./runCommands";
 
-
-const kpConfigFileName = ".katapod_config.json";
-// const kpConfigFileName = ".katapod_config.json";
-const kpDefaultStartupScript = "wait.sh";
-const kpDefaultTerminalName = "cqlsh-editor";
-const kpDefaultTerminalID = "cqlsh";
-const kpDefaultIntroStepName = "intro";
+import {kpConfigFileName, kpDefaultStartupScript, kpDefaultTerminalName, kpDefaultTerminalID, kpDefaultIntroStepName} from "./configuration_constants";
 
 
 // Structure of the config object
